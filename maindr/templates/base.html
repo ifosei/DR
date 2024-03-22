@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:gray;
+    }
+#form{
+
+    width: 400px;
+    height: 400px;
+    margin:0;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
+    border: 2px soild grey;
+    border-radius: 10px;
+    background-color:white;
+    padding: 10px;
+}
+tbody tr td{
+    padding-bottom: 10px;
+    
+}
+tbody{
+    margin: 10px;
+}
+input[type=submit]{
+    background-color:gray;
+    border: none;
+    padding: 4px;
+    border-radius: 5px;
+
+}
+input[type=number]{
+    width: 90px;
+}
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: white;">Br</h1>
+    <div id="form">
+        <form method="post" action="" id="ABdataset">
+            {% csrf_token %}
+            <table>
+                <thead>
+                    <th></th>
+                    <th></th>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><label for="Pl">Density of the liquid Phase: </label></td>
+                        <td><input name="Pl" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Vsl">QLiquid Slip Velocity: </label></td>
+                        <td><input name="Vsl" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="d">Diameter of the pipe: </label></td>
+                        <td><input name="d" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="ol">Gas liquid Interfacial Tension:</label></td>
+                        <td><input name="ol" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Vsg">Gas slip Velocity: </label></td>
+                        <td><input name="Vsg" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Ul">Liquid Viscosity</label></td>
+                        <td><input name="Ul" type="number" step="any" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Ug">Gas Viscosity: </label></td>
+                        <td><input name="Ug" type="number" step="any" required></td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" value="basecalc" name="basecalcsub">
+        </form>
+
+    </div>
+</body>
+</html>
