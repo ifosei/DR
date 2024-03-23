@@ -63,11 +63,16 @@ def l_values(request):
         elif d2['Ls'] < d2['Ngv'] < d2['Lm']:
             request.session['flow_pattern'] = 4
             request.session['regime'] = 'Transition flow regime'
-    return render(request,'L_graph.html')
+            return redirect(dpf1f2)
+    context={
+        'Nd':d2['Nd'],
+        }
+    return render(request,'L_graph.html',context)
 
 def fp1(request):
+    d2 = request.session['d2']
     if 'fp1sub' in request.POST:
-        d2 = request.session['d2']
+
         F1 = float(request.POST.get('F1'))
         F2 = float(request.POST.get('F2'))
         F3 = float(request.POST.get('F3'))
@@ -81,8 +86,10 @@ def fp1(request):
         # request.session['d2']['F3'] = F3
         # request.session['d2']['F4'] = F4
         return redirect(dpf1f2)
-
-    return render(request,'fp1.html')
+    context={
+        'Nl':d2['Nl'],
+    }
+    return render(request,'fp1.html',context)
 
 def fp2(request):
     d2 = request.session['d2']
@@ -140,10 +147,16 @@ def dpf1f2(request):
         Vm = float(request.POST.get('Vm'))
         dp_dzs = (Fm * d1['Pl'] * d1['Vsl'] * Vm) / (2 * gc * d1['d'])
 
-        request.session['dp'] = dp_dzs
-        return redirect(results)
-
-    return render(request,'dpf1f2.html')
+        if request.session['flow_pattern'] == 4:
+            request.session['dp_dzs'] = dp_dzs
+            return redirect(dpf3)
+        else:
+            request.session['dp'] = dp_dzs
+            return redirect(results)
+    context={
+        'NRe':NRe,
+    }
+    return render(request,'dpf1f2.html',context)
 
 def dpf3(request):
     g = 32.2
@@ -169,12 +182,18 @@ def dpf3(request):
             rn_d = (((0.3713 * d1['ol']) / (Pg * (Vsg1**2) * d1['d'])) * (Nwe * Nμ)**0.302)
         import math
         f_f = ((1 / (4 * math.log10(0.27*(rn_d)))**2) + (0.067 * (rn_d)**1.73) ) *4 
-        print('The friction factor for mist flow regime is ',dp_dzm)
+        print('The friction factor for mist flow regime is ',f_f)
 
         #calculating friction gradient according to flow regime,for mist,dp_dzm
         dp_dzm = (f_f * Pg * Vsg1 ** 2) / (2 * gc * d1['d'])
-        request.session['dp'] = dp_dzm
-        return redirect('results')
+        
+        if request.session['flow_pattern'] == 4:
+            request.session['dp_dzm'] = dp_dzm
+            return redirect(dpf4)
+        else:
+            request.session['dp'] = dp_dzm
+            return redirect('results')
+
     
     return render(request,'fp3.html')
 
@@ -182,15 +201,23 @@ def dpf3(request):
 def dpf4(request):
     d1 = request.session['d1']
     d2 = request.session['d2']
+    dp_dzs = request.session['dp_dzs']
+    dp_dzm = request.session['dp_dzm']
     A = (d2['Lm'] - d2['Ngv']) / (d2['Lm'] - d2['Ls'])
     B = (d2['Ngv'] - d2['Ls']) / (d2['Lm'] - d2['Ls'])
     dp_dzt = (A * dp_dzs) + (B * dp_dzm)
+
+    request.session['dp'] = dp_dzt
+    return redirect(results)
+
 
         
 
 def results(request):
     dp = request.session['dp'] 
+    regime = request.session['regime']
     context={
-        'dp':dp,
+        'Dp':dp,
+        'regime':regime,
     }
     return render(request,'results.html',context)

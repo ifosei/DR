@@ -1,1 +1,54 @@
-<h1>{{dp}}</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:gray;
+    }
+#form{
+
+    width: 400px;
+    height: 400px;
+    margin:0;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
+    border: 2px soild grey;
+    border-radius: 10px;
+    background-color:white;
+    padding: 10px;
+}
+tbody tr td{
+    padding-bottom: 10px;
+    
+}
+tbody{
+    margin: 10px;
+}
+input[type=submit]{
+    background-color:gray;
+    border: none;
+    padding: 4px;
+    border-radius: 5px;
+
+}
+input[type=number]{
+    width: 90px;
+}
+    </style>
+</head>
+<body>
+    <h3 style="text-align: center; color: white;">Use 'L-Factors against diameter Number,Nd' graph,to read the values of L1 and L2</h3>
+    <p>The Nd  value {{Nd}} is: </p>
+    <div id="form">
+        <h3>The Pressure Drop for {{regime}} is: {{Dp}}</h3> 
+
+    </div>
+</body>
+</html>
