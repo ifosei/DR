@@ -41,50 +41,52 @@ def l_values(request):
         L2 = float(request.POST.get('L2'))
     
         if 0 <= d2['Ngv'] <= (L1 + L2) * d2['Nlv']:
-            request.session['d2']['flow_pattern'] = 1
-            request.session['d2']['regime'] = 'Bubble flow regime'
+            request.session['flow_pattern'] = 1
+            request.session['regime'] = 'Bubble flow regime'
             return redirect(fp1)
             
         elif (L1 + L2) * (d2['Nlv']) <= d2['Ngv'] <= d2['Ls']:
-            request.session['d2']['flow_pattern'] = 2
-            request.session['d2']['regime'] = 'Slug flow regime'
+            request.session['flow_pattern'] = 2
+            request.session['regime'] = 'Slug flow regime'
             return redirect(fp2)
             
         elif (d2['Ngv'] > d2['Lm']):
-            request.session['d2']['flow_pattern'] = 3
-            request.session['d2']['regime'] = 'Mist flow regime'
+            request.session['flow_pattern'] = 3
+            request.session['regime'] = 'Mist flow regime'
             S = 0
-            Hl3 = (1 / (1 + (d1['Vsg'] / d2['Vsl'])))
-            request.session['d2']['S'] = 0
-            request.session['d2']['Hl3'] = Hl3
+            Hl3 = (1 / (1 + (d1['Vsg'] / d1['Vsl'])))
+            request.session['S'] = 0
+            request.session['Hl3'] = Hl3
+            return redirect(dpf3)
             
             
         elif d2['Ls'] < d2['Ngv'] < d2['Lm']:
-            request.session['d2']['flow_pattern'] = 4
-            request.session['d2']['regime'] = 'Transition flow regime'
+            request.session['flow_pattern'] = 4
+            request.session['regime'] = 'Transition flow regime'
     return render(request,'L_graph.html')
 
 def fp1(request):
     if 'fp1sub' in request.POST:
         d2 = request.session['d2']
         F1 = float(request.POST.get('F1'))
-        F2 = float(request.POST('F2'))
-        F3 = float(request.POST('F3'))
-        F4 = float(request.POST('F4'))
+        F2 = float(request.POST.get('F2'))
+        F3 = float(request.POST.get('F3'))
+        F4 = float(request.POST.get('F4'))
 
         F3p = F3 - (F4/d2['Nd'])
         S = F1 + (F2 * d2['Nlv']) + F3p * (d2['Ngv'] / (1 + d2['Nlv'] ))
-
-        request.session['d2']['S'] = S
+        print('FDSDSAFSADFSADFDSAF')
+        request.session['S'] = S
         # request.session['d2']['F2'] = F2
         # request.session['d2']['F3'] = F3
         # request.session['d2']['F4'] = F4
+        return redirect(dpf1f2)
 
     return render(request,'fp1.html')
 
 def fp2(request):
     d2 = request.session['d2']
-    if 'fp1sub' in request.POST:
+    if 'fp2sub' in request.POST:
         F5 = float(request.POST.get('F5'))
         F6 = float(request.POST('F6'))
         F7 = float(request.POST('F7'))
@@ -94,7 +96,11 @@ def fp2(request):
         request.session['d2']['S'] = S
 
 
-    request.session['d2']['S'] = S
+        request.session['S'] = S
+        
+        print(request.session['d2'])
+
+        return redirect(dpf1f2)
     return render(request,'fp2.html')
 
 # def fp3(request):
@@ -116,12 +122,13 @@ def dpf1f2(request):
     d1 = request.session['d1']
     d2 = request.session['d2']
     #determining slip velocity for bubble or slug flow regime, Vs
-    Vs = (d2['S'] / (d2['ol'] / (d2['ol'] * g)) ** 0.25)
+    print(d2)
+    Vs = (request.session['S'] / (d1['ol'] / (d1['ol'] * g)) ** 0.25)
           
     #determining the liquid holdup, Hl 
-    Hls = ((Vs - d1['Vsg'] - d1['Vsl']) + ((((Vs - d1['Vsg'] - d1['Vsl'])**2 ) + (4 * Vs * d['Vsl'] )) ** (1/2))) / (2 * Vs)
+    Hls = ((Vs - d1['Vsg'] - d1['Vsl']) + ((((Vs - d1['Vsg'] - d1['Vsl'])**2 ) + (4 * Vs * d1['Vsl'] )) ** (1/2))) / (2 * Vs)
 
-    NRe = (d2['Pl'] * d2['Vsl'] * d2['d']) / (d2['Ul'])
+    NRe = (d1['Pl'] * d1['Vsl'] * d1['d']) / (d1['Ul'])
     if 'getdp' in request.POST:
         f1 = float(request.POST.get('f1'))
         R = (d1['Vsg'] /d2[' Vsl'])
@@ -134,8 +141,43 @@ def dpf1f2(request):
         dp_dzs = (Fm * d1['Pl'] * d1['Vsl'] * Vm) / (2 * gc * d1['d'])
 
         request.session['d2']['dp'] = dp_dzs
+        return redirect(results)
 
     return render(request,'dpf1f2.html')
+
+def dpf3(request):
+    g = 32.2
+    gc = 32.2
+    if 'dpf3calc' in request.POST:
+        d1 = request.session['d1']
+        d2 = request.session['d2']
+        Pg = float(request.POST.get('Pg'))
+        rn = float(request.POST.get('rn'))
+        Vsg1 = float(request.POST.get('Vsg1'))
+        #correcting the gas density,ρg1                     
+        Pg1 = (Pg * d2['Ngv']) / (d2['Lm'])
+        #determining the liquid reynolds number, NRe                     
+        NRe = (Pg1 * d1['Vsg'] * d1['d']) / (d1['Ug'])
+        #determining the Weber number, Nwe
+        Nwe = (Pg1 * ((d1['Vsg'])**2) * rn) / (d1['Ul'])
+        #determining the dimensionless number, Nμ
+        Nμ = (d1['Ul']**2) / (d1['Pl'] * d1['ol'] * rn)
+
+        if Nwe * Nμ <= 0.005:
+           rn_d = (0.0749 * d1['ol']) / (Pg * (Vsg1**2) * d1['d'])
+        elif Nwe * Nμ > 0.005:
+            rn_d = (((0.3713 * d1['ol']) / (Pg * (Vsg1**2) * d1['d'])) * (Nwe * Nμ)**0.302)
+        import math
+        f_f = ((1 / (4 * math.log10(0.27*(rn_d)))**2) + (0.067 * (rn_d)**1.73) ) *4 
+        print('The friction factor for mist flow regime is ',dp_dzm)
+
+        #calculating friction gradient according to flow regime,for mist,dp_dzm
+        dp_dzm = (f_f * Pg * Vsg1 ** 2) / (2 * gc * d1['d'])
+        request.session['d2']['dp'] = dp_dzm
+        return redirect('results')
+    
+    return render(request,'fp3.html')
+
 
 def dpf4(request):
     d1 = request.session['d1']
@@ -146,4 +188,9 @@ def dpf4(request):
 
         
 
-            
+def results(request):
+    dp = request.session['d2']['dp'] 
+    context={
+        'dp':dp,
+    }
+    return render(request,'results.html',context)
