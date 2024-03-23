@@ -14,7 +14,7 @@ def base(request):
         Ul = float(request.POST.get('Ul'))
         Ug = float(request.POST.get('Ug'))
 
-        base_core_dataset = base_core_func(Pl,Vsl,Vsg,d,ol,Ul,Ug)
+        base_core_dataset = base_core_func(Pl,Vsl,d,ol,Vsg,Ul,Ug)
         
         basecalcdata = {
             'Pl':Pl,

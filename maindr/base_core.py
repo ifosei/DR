@@ -22,7 +22,7 @@ def base_core_func(Pl,Vsl,d,ol,Vsg,Ul,Ug):
     Nd = d * (((g * Pl) / (ol)))**(1/4)
     Ls = 50 + (36 * Nlv)
     Lm = 75 + (84 * (Nlv ** 0.75))
-
+    print(d,g,Pl,ol)
     return {
         'Nl':Nl,
         'Nlv':Nlv,
