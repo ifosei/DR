@@ -88,12 +88,12 @@ def fp2(request):
     d2 = request.session['d2']
     if 'fp2sub' in request.POST:
         F5 = float(request.POST.get('F5'))
-        F6 = float(request.POST('F6'))
-        F7 = float(request.POST('F7'))
+        F6 = float(request.POST.get('F6'))
+        F7 = float(request.POST.get('F7'))
         
         F6p = (0.029 * d2['Nd']) + F6 
         S = (1 + F5) * (((d2['Ngv'] ** 0.982) + F6p) / (1 + (F7 * d2['Nlv']))**2)
-        request.session['d2']['S'] = S
+
 
 
         request.session['S'] = S
@@ -129,9 +129,9 @@ def dpf1f2(request):
     Hls = ((Vs - d1['Vsg'] - d1['Vsl']) + ((((Vs - d1['Vsg'] - d1['Vsl'])**2 ) + (4 * Vs * d1['Vsl'] )) ** (1/2))) / (2 * Vs)
 
     NRe = (d1['Pl'] * d1['Vsl'] * d1['d']) / (d1['Ul'])
-    if 'getdp' in request.POST:
+    if 'getDp' in request.POST:
         f1 = float(request.POST.get('f1'))
-        R = (d1['Vsg'] /d2[' Vsl'])
+        R = (d1['Vsg'] / d1['Vsl'])
         f3 = 1 + ( f1 * ((R / 50) ** (1/2))) 
         f2 = (f1 * R * (d2['Nd'] ** 2/3))
         Fm = (f1 * (f2 / f3))
@@ -140,7 +140,7 @@ def dpf1f2(request):
         Vm = float(request.POST.get('Vm'))
         dp_dzs = (Fm * d1['Pl'] * d1['Vsl'] * Vm) / (2 * gc * d1['d'])
 
-        request.session['d2']['dp'] = dp_dzs
+        request.session['dp'] = dp_dzs
         return redirect(results)
 
     return render(request,'dpf1f2.html')
@@ -173,7 +173,7 @@ def dpf3(request):
 
         #calculating friction gradient according to flow regime,for mist,dp_dzm
         dp_dzm = (f_f * Pg * Vsg1 ** 2) / (2 * gc * d1['d'])
-        request.session['d2']['dp'] = dp_dzm
+        request.session['dp'] = dp_dzm
         return redirect('results')
     
     return render(request,'fp3.html')
@@ -189,7 +189,7 @@ def dpf4(request):
         
 
 def results(request):
-    dp = request.session['d2']['dp'] 
+    dp = request.session['dp'] 
     context={
         'dp':dp,
     }
