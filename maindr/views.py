@@ -106,9 +106,12 @@ def fp2(request):
         request.session['S'] = S
         
         print(request.session['d2'])
-
         return redirect(dpf1f2)
-    return render(request,'fp2.html')
+    context={
+        'Nl':d2['Nl'],
+    }
+        
+    return render(request,'fp2.html',context)
 
 # def fp3(request):
 #     d2 = request.session['d2']
