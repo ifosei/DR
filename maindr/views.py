@@ -137,7 +137,13 @@ def dpf1f2(request):
 
     return render(request,'dpf1f2.html')
 
-    
+def dpf4(request):
+    d1 = request.session['d1']
+    d2 = request.session['d2']
+    A = (d2['Lm'] - d2['Ngv']) / (d2['Lm'] - d2['Ls'])
+    B = (d2['Ngv'] - d2['Ls']) / (d2['Lm'] - d2['Ls'])
+    dp_dzt = (A * dp_dzs) + (B * dp_dzm)
+
         
 
             
