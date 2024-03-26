@@ -222,11 +222,16 @@ def results(request):
     d2 = request.session['d2']
     dp = request.session['dp'] 
     regime = request.session['regime']
-    Nl = d2['Nl']
+    Nlv = d2['Nlv']
+    try:
+        Re = request.session['NRe'],
+    except KeyError:
+        Re = 'N/A'
     context={
         'Dp':dp,
         'regime':regime,
-        'Nl':Nl,
-        'Re':request.session['NRe'],
+        'Nlv':Nlv,
+        'Re':Re,
+        
     }
     return render(request,'results.html',context)
