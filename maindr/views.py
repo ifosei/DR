@@ -155,6 +155,7 @@ def dpf1f2(request):
             return redirect(dpf3)
         else:
             request.session['dp'] = dp_dzs
+            request.session['NRe'] = NRe
             return redirect(results)
     context={
         'NRe':NRe,
@@ -195,6 +196,7 @@ def dpf3(request):
             return redirect(dpf4)
         else:
             request.session['dp'] = dp_dzm
+            request.session['NRe'] = NRe
             return redirect('results')
 
     
@@ -217,10 +219,14 @@ def dpf4(request):
         
 
 def results(request):
+    d2 = request.session['d2']
     dp = request.session['dp'] 
     regime = request.session['regime']
+    Nl = d2['Nl']
     context={
         'Dp':dp,
         'regime':regime,
+        'Nl':Nl,
+        'Re':request.session['NRe'],
     }
     return render(request,'results.html',context)
