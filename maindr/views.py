@@ -213,6 +213,7 @@ def dpf4(request):
     dp_dzt = (A * dp_dzs) + (B * dp_dzm)
 
     request.session['dp'] = dp_dzt
+    request.session['NRe'] = 'N/A'
     return redirect(results)
 
 
@@ -223,15 +224,10 @@ def results(request):
     dp = request.session['dp'] 
     regime = request.session['regime']
     Nlv = d2['Nlv']
-    try:
-        Re = request.session['NRe'],
-    except KeyError:
-        Re = 'N/A'
     context={
         'Dp':dp,
         'regime':regime,
         'Nlv':Nlv,
-        'Re':Re,
-        
+        'Re':request.session['NRe'],
     }
     return render(request,'results.html',context)
